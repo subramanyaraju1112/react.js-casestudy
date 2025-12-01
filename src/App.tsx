@@ -1,9 +1,9 @@
-import { AuthLayout } from "./layouts";
+import AppRoutes from "./routes/appRoutes";
 
 function App() {
   return (
     <>
-      <AuthLayout />
+      <AppRoutes />
     </>
   );
 }

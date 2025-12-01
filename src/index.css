@@ -4,17 +4,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  font-family: "Inter", system-ui, sans-serif;
-
-  /* text colors */
-  --color-primary: #141414;
-  --color-secondary: #777;
-  --color-success: #4DCF4D;
-  --color-warning: #FF852D;
+@theme {
+  /* semantic text colors */
+  --color-text-theme: #8752f3;
+  --color-text-primary: #141414;
+  --color-text-secondary: #777;
+  --color-text-success: #4dcf4d;
+  --color-text-warning: #ff852d;
 
   /* button colors */
-  --color-theme: #8752F3;
+  --color-theme: #8752f3;
+}
+
+:root {
+  font-family: "Inter", system-ui, sans-serif;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
