@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthLayout from "@/layouts/AuthLayout";
-import {SignUp,SignIn  }from "@/pages/auth";
+import { SignUp, SignIn } from "@/pages/auth";
+import { Task } from "@/modules/user/pages";
 
 const AppRoutes = () => {
   return (
@@ -15,6 +16,8 @@ const AppRoutes = () => {
           <Route path="/signup" element={<SignUp />} />
         </Route>
 
+        {/* USER ROUTES */}
+        <Route path="/user/task" element={<Task />} />
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>

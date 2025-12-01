@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const formSchema = z
   .object({
@@ -206,13 +206,9 @@ const SignUp: React.FC = () => {
         {/* SIGN IN LINK */}
         <div className="flex gap-1 justify-center items-center">
           <span className="text-text-secondary">Already have an account?</span>
-          <Button
-            variant="link"
-            className="p-0 text-text-theme"
-            onClick={() => navigate("/signin")}
-          >
+          <Link className="p-0 text-text-theme" to="/signin">
             Sign In
-          </Button>
+          </Link>
         </div>
       </form>
     </Form>
