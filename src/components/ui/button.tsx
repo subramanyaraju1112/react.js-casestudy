@@ -56,7 +56,6 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      // ✅ FIXED: merge className separately (prevents hover bug)
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />

@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -28,7 +28,6 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignIn: React.FC = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<FormValues>({

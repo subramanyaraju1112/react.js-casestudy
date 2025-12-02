@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthLayout from "@/layouts/AuthLayout";
 import { SignUp, SignIn } from "@/pages/auth";
 import { Task } from "@/modules/user/pages";
+import { CommonLayout } from "@/layouts";
 
 const AppRoutes = () => {
   return (
@@ -16,8 +17,12 @@ const AppRoutes = () => {
           <Route path="/signup" element={<SignUp />} />
         </Route>
 
-        {/* USER ROUTES */}
-        <Route path="/user/task" element={<Task />} />
+        {/* APP LAYOUT */}
+        <Route element={<CommonLayout />}>
+          {/* NORMAL USER ROUTE */}
+          <Route path="/user/task" element={<Task />} />
+        </Route>
+
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
