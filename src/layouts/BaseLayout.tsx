@@ -1,7 +1,7 @@
 import { Footer, Header } from "@/components/common";
 import { Outlet } from "react-router-dom";
 
-const CommonLayout: React.FC = () => {
+const BaseLayout: React.FC = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 min-h-screen flex flex-col">
       <Header />
@@ -13,4 +13,4 @@ const CommonLayout: React.FC = () => {
   );
 };
 
-export default CommonLayout;
+export default BaseLayout;

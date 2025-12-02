@@ -1,5 +1,6 @@
-type TaskStatus = "pending" | "completed";
+// User ---> Add Task ---> Modal
 
+type TaskStatus = "pending" | "completed";
 interface Task {
   id: number;
   title: string;
@@ -9,3 +10,13 @@ interface Task {
 }
 
 export type { Task };
+
+
+// Admin ---> Users
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export type { User };

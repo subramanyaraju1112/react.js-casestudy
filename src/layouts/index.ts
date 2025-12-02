@@ -1,2 +1,3 @@
 export { default as AuthLayout } from "./AuthLayout";
-export { default as CommonLayout } from "./CommonLayout"
+export { default as BaseLayout } from "./BaseLayout";
+export { default as AdminLayout } from "./AdminLayout";
