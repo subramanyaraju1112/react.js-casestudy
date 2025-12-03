@@ -1,8 +1,4 @@
-import { AddTaskModal } from "@/components/common";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Add } from "iconsax-reactjs";
 import { useState } from "react";
 import { users } from "@/constants";
 import {
@@ -18,22 +14,33 @@ import { UserCard } from "../components";
 const USERS_PER_PAGE = 12;
 
 const UsersList: React.FC = () => {
-  const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
+  const filteredUsers = users.filter((user) => {
+    const query = search.toLowerCase();
+    return (
+      user.name.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query)
+    );
+  });
 
-  const indexOfLastTask = currentPage * USERS_PER_PAGE;
-  const indexOfFirstTask = indexOfLastTask - USERS_PER_PAGE;
-  const currentUsers = users.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
+
+  const indexOfLastUser = currentPage * USERS_PER_PAGE;
+  const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
   return (
     <section className="flex flex-col gap-9">
       <section className="flex flex-col gap-5">
-        <span className="text-text-primary text-sm">Mon, Jun 07</span>
+        <span className="text-text-primary text-sm dark:text-white">
+          Mon, Jun 07
+        </span>
         {/* TOP LAYOUT */}
         <div className="flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
           {/* LEFT SIDE TEXT */}
-          <div className="text-text-primary text-2xl sm:text-3xl leading-tight">
+          <div className="text-text-primary text-2xl sm:text-3xl leading-tight dark:text-white">
             <h1>Hey Johnathan,</h1>
             <p>Here’s your To-Do List.</p>
           </div>
@@ -41,22 +48,14 @@ const UsersList: React.FC = () => {
           {/* RIGHT SIDE SEARCH + BUTTON */}
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <Input
-              placeholder="Search by name, date..."
+              placeholder="Search by name or email..."
               className="w-full sm:w-64 text-text-secondary"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
             />
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="primary"
-                  className="flex items-center gap-2 justify-center"
-                >
-                  <Add size={20} className="text-white" />
-                  Add Task
-                </Button>
-              </DialogTrigger>
-              {/* Add Task Modal */}
-              <AddTaskModal onClose={() => setOpen(false)} />
-            </Dialog>
           </div>
         </div>
       </section>
@@ -84,6 +83,7 @@ const UsersList: React.FC = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <PaginationItem key={i}>
                 <PaginationLink
+                  className="hover:bg-theme dark:text-white"
                   isActive={currentPage === i + 1}
                   onClick={() => setCurrentPage(i + 1)}
                 >

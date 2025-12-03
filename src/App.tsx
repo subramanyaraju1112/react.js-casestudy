@@ -1,9 +1,12 @@
+import { ThemeProvider } from "./components/theme-provider";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
     <>
-      <AppRoutes />
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AppRoutes />
+      </ThemeProvider>
     </>
   );
 }

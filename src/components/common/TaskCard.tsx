@@ -12,6 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Dialog } from "../ui/dialog";
+import EditTaskModal from "./EditTaskModal";
+import { useState } from "react";
 
 export type TaskStatus = "pending" | "completed";
 export type UserRole = "admin" | "user";
@@ -44,79 +47,105 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDelete,
 }) => {
   const isAdmin = role === "admin";
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <Card className="w-full flex flex-col gap-4 rounded-xl shadow-sm">
-      {/* HEADER */}
-      <CardHeader className="flex flex-row items-center justify-between">
-        {/* STATUS */}
-        <span
-          className={`text-sm font-semibold tracking-widest uppercase ${statusColorMap[status]}`}
-        >
-          {status}
-        </span>
+    <>
+      {/* ✅ DIALOG MOVED OUTSIDE MENU */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <EditTaskModal onClose={() => setIsDialogOpen(false)} />
+      </Dialog>
 
-        {/* ACTION MENU */}
-        <CardAction>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-1 focus:outline-none hover:cursor-pointer">
-                <More size={18} className="text-text-primary" />
-              </button>
-            </DropdownMenuTrigger>
+      <Card className="w-full flex flex-col gap-4 rounded-xl shadow-sm">
+        {/* HEADER */}
+        <CardHeader className="flex flex-row items-center justify-between">
+          {/* STATUS */}
+          <span
+            className={`text-sm font-semibold tracking-widest uppercase ${statusColorMap[status]}`}
+          >
+            {status}
+          </span>
 
-            <DropdownMenuContent align="end">
-              {onEdit && (
-                <DropdownMenuItem
-                  onClick={onEdit}
-                  className="cursor-pointer text-text-primary"
-                >
-                  <Edit size={16} className="text-text-primary" />
-                  Edit Task
-                </DropdownMenuItem>
-              )}
+          {/* ACTION MENU */}
+          <CardAction>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1 focus:outline-none hover:cursor-pointer">
+                  <More
+                    size={18}
+                    className="text-text-primary dark:text-white"
+                  />
+                </button>
+              </DropdownMenuTrigger>
 
-              {/* MARK COMPLETE – only if not completed */}
-              {status !== "completed" && (
-                <DropdownMenuItem
-                  onClick={onComplete}
-                  className="cursor-pointer text-text-primary"
-                >
-                  <TickCircle className="text-text-primary" size={16} />
-                  Mark as Complete
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuContent align="end">
+                {/* ✅ OPEN DIALOG VIA STATE */}
+                {onEdit && (
+                  <DropdownMenuItem
+                    className="cursor-pointer text-text-primary dark:text-white"
+                    onClick={() => {
+                      setIsDialogOpen(true);
+                      onEdit(); // optional side-effect
+                    }}
+                  >
+                    <Edit
+                      size={16}
+                      className="text-text-primary dark:text-white"
+                    />
+                    Edit Task
+                  </DropdownMenuItem>
+                )}
 
-              {/* ADMIN ONLY DELETE */}
-              {isAdmin && onDelete && (
-                <DropdownMenuItem
-                  onClick={onDelete}
-                  className="cursor-pointer text-text-danger"
-                >
-                  <Bag size={16} className=" text-text-danger" />
-                  Delete Task
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </CardAction>
-      </CardHeader>
+                {/* MARK COMPLETE */}
+                {status !== "completed" && (
+                  <DropdownMenuItem
+                    onClick={onComplete}
+                    className="cursor-pointer text-text-primary dark:text-white"
+                  >
+                    <TickCircle
+                      size={16}
+                      className="text-text-primary dark:text-white"
+                    />
+                    Mark as Complete
+                  </DropdownMenuItem>
+                )}
 
-      {/* CONTENT */}
-      <CardContent className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
+                {/* ADMIN DELETE */}
+                {isAdmin && onDelete && (
+                  <DropdownMenuItem
+                    onClick={onDelete}
+                    className="cursor-pointer text-text-danger"
+                  >
+                    <Bag size={16} className="text-text-danger" />
+                    Delete Task
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardAction>
+        </CardHeader>
 
-        <p className="text-text-secondary text-sm line-clamp-3 min-h-[72px]">{description}</p>
-      </CardContent>
+        {/* CONTENT */}
+        <CardContent className="flex flex-col gap-2">
+          <h2 className="text-2xl font-bold text-text-primary dark:text-white">
+            {title}
+          </h2>
 
-      {/* FOOTER */}
-      <CardFooter>
-        <p className="text-base font-semibold text-black">
-          Created On: {createdOn}
-        </p>
-      </CardFooter>
-    </Card>
+          <p className="text-text-secondary text-sm line-clamp-3 min-h-[72px] dark:text-text-gray">
+            {description}
+          </p>
+        </CardContent>
+
+        {/* FOOTER */}
+        <CardFooter>
+          <p className="text-base font-semibold text-black dark:text-white">
+            Created On: {createdOn}
+          </p>
+        </CardFooter>
+      </Card>
+    </>
   );
 };
 
 export default TaskCard;
+

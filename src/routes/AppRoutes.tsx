@@ -3,7 +3,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import { AdminLayout, BaseLayout } from "@/layouts";
 import { SignUp, SignIn } from "@/pages/auth";
 import { Task } from "@/modules/user/pages";
-import { UsersList } from "@/modules/admin/pages";
+import { TasksList, UsersList } from "@/modules/admin/pages";
 
 const AppRoutes = () => {
   return (
@@ -26,6 +26,7 @@ const AppRoutes = () => {
           {/* ADMIN FLOW */}
           <Route element={<AdminLayout />}>
             <Route path="/admin/users" element={<UsersList />} />
+            <Route path="/admin/users/:id/tasks" element={<TasksList />} />
           </Route>
         </Route>
 

@@ -27,7 +27,7 @@ const taskSchema = z.object({
 
 type TaskFormValues = z.infer<typeof taskSchema>;
 
-const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+const EditTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -44,8 +44,8 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle className="pb-5 text-xl text-text-primary dark:text-white border-b">
-          Add New Task
+        <DialogTitle className="pb-5 text-xl text-text-primary border-b dark:text-white">
+          Edit Task
         </DialogTitle>
         {/* FORM */}
         <Form {...form}>
@@ -73,7 +73,11 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             {/* DESCRIPTION */}
             <div className="flex flex-col gap-1">
               <Label>Description</Label>
-              <Textarea {...form.register("description")} rows={4} placeholder="Enter description..."/>
+              <Textarea
+                {...form.register("description")}
+                rows={4}
+                placeholder="Enter description..."
+              />
               {form.formState.errors.description && (
                 <p className="text-sm text-text-danger">
                   {form.formState.errors.description.message}
@@ -84,7 +88,7 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             {/* FOOTER BUTTONS */}
             <DialogFooter className="flex justify-end">
               <>
-                <Button variant="outline" type="button" className="dark:text-white" onClick={onClose}>
+                <Button variant="outline" type="button" onClick={onClose} className="dark:text-white">
                   Cancel
                 </Button>
 
@@ -93,7 +97,7 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                   variant="primary"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "Adding..." : "Add Task"}
+                  {form.formState.isSubmitting ? "Updating..." : "Update Task"}
                 </Button>
               </>
             </DialogFooter>
@@ -104,4 +108,4 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   );
 };
 
-export default AddTaskModal;
+export default EditTaskModal;

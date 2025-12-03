@@ -2,3 +2,4 @@ export { default as Header } from "./Header";
 export { default as Footer } from "./Footer";
 export { default as TaskCard } from "./TaskCard";
 export { default as AddTaskModal } from "./AddTaskModal";
+export { default as EditTaskModal } from "./EditTaskModal";
