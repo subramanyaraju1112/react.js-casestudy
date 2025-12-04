@@ -15,18 +15,19 @@ import {
 import { Dialog } from "../ui/dialog";
 import EditTaskModal from "./EditTaskModal";
 import { useState } from "react";
+import { formatDate } from "@/utils/formatDate";
 
 export type TaskStatus = "pending" | "completed";
 export type UserRole = "admin" | "user";
 
 interface TaskCardProps {
+  taskId: string;
   title: string;
   description: string;
   status: TaskStatus;
   role: UserRole;
   createdOn: string;
-
-  onEdit?: () => void;
+  onEdit?: (data: { title: string; description: string }) => Promise<any>;
   onComplete?: () => void;
   onDelete?: () => void;
 }
@@ -51,10 +52,17 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <>
-      {/* ✅ DIALOG MOVED OUTSIDE MENU */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <EditTaskModal onClose={() => setIsDialogOpen(false)} />
-      </Dialog>
+      {/* DIALOG MOVED OUTSIDE MENU */}
+      {onEdit && (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <EditTaskModal
+            title={title}
+            description={description}
+            onClose={() => setIsDialogOpen(false)}
+            onSubmit={onEdit}
+          />
+        </Dialog>
+      )}
 
       <Card className="w-full flex flex-col gap-4 rounded-xl shadow-sm">
         {/* HEADER */}
@@ -79,13 +87,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end">
-                {/* ✅ OPEN DIALOG VIA STATE */}
                 {onEdit && (
                   <DropdownMenuItem
                     className="cursor-pointer text-text-primary dark:text-white"
                     onClick={() => {
                       setIsDialogOpen(true);
-                      onEdit(); // optional side-effect
                     }}
                   >
                     <Edit
@@ -139,7 +145,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         {/* FOOTER */}
         <CardFooter>
           <p className="text-base font-semibold text-black dark:text-white">
-            Created On: {createdOn}
+            Created On: {formatDate(createdOn)}
           </p>
         </CardFooter>
       </Card>
@@ -148,4 +154,3 @@ const TaskCard: React.FC<TaskCardProps> = ({
 };
 
 export default TaskCard;
-

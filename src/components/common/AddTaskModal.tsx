@@ -12,6 +12,9 @@ import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { Form } from "../ui/form";
+import { useAddTaskMutation } from "@/redux/services/taskApi";
+import { useAddUserTaskMutation } from "@/redux/services/adminApi";
+import { toast } from "sonner";
 
 const taskSchema = z.object({
   title: z
@@ -27,7 +30,12 @@ const taskSchema = z.object({
 
 type TaskFormValues = z.infer<typeof taskSchema>;
 
-const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+type AddTaskProps = {
+  userId?: string;
+  onClose?: () => void;
+};
+
+const AddTaskModal: React.FC<AddTaskProps> = ({ userId, onClose }) => {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -36,16 +44,30 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     },
   });
 
-  const onSubmit = (data: TaskFormValues) => {
-    console.log("Task Added:", data);
-    form.reset();
-    onClose?.();
+  const [addTask] = useAddTaskMutation();
+  const [addUserTask] = useAddUserTaskMutation();
+
+  const onSubmit = async (data: TaskFormValues) => {
+    try {
+      let response;
+      if (userId) {
+        response = await addUserTask({ userId, ...data }).unwrap();
+      } else {
+        response = await addTask(data).unwrap();
+      }
+      toast.success(response.message || "Task Added Successfully");
+      form.reset();
+      onClose?.();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed To Create Task");
+    }
   };
+
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="pb-5 text-xl text-text-primary dark:text-white border-b">
-          Add New Task
+          {userId ? "Add Task for User" : "Add New Task"}
         </DialogTitle>
         {/* FORM */}
         <Form {...form}>
@@ -73,7 +95,11 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             {/* DESCRIPTION */}
             <div className="flex flex-col gap-1">
               <Label>Description</Label>
-              <Textarea {...form.register("description")} rows={4} placeholder="Enter description..."/>
+              <Textarea
+                {...form.register("description")}
+                rows={4}
+                placeholder="Enter description..."
+              />
               {form.formState.errors.description && (
                 <p className="text-sm text-text-danger">
                   {form.formState.errors.description.message}
@@ -84,7 +110,12 @@ const AddTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             {/* FOOTER BUTTONS */}
             <DialogFooter className="flex justify-end">
               <>
-                <Button variant="outline" type="button" className="dark:text-white" onClick={onClose}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="dark:text-white"
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
 

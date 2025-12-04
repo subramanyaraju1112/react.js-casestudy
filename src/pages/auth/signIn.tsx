@@ -59,13 +59,16 @@ const SignIn: React.FC = () => {
 
       const role = response?.user?.role;
 
-      setTimeout(() => {
-        if (role === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/user/task");
-        }
-      }, 800);
+      if (!role) {
+        toast.error("Invalid role received");
+        return;
+      }
+
+      if (role === "admin") {
+        navigate("/admin/all-users", { replace: true });
+      } else {
+        navigate("/user/task", { replace: true });
+      }
     } catch (err) {
       console.error("SIGN IN ERROR:", err);
 

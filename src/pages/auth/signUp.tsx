@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignUpMutation } from "@/redux/services/authApi";
 import { toast } from "sonner";
 
@@ -41,6 +41,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 const SignUp: React.FC = () => {
+  const navigate = useNavigate();
   const [signUp, { isLoading, isSuccess }] = useSignUpMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -72,8 +73,9 @@ const SignUp: React.FC = () => {
   useEffect(() => {
     if (isSuccess) {
       form.reset();
+      navigate("/signin");
     }
-  }, [isSuccess, form]);
+  }, [isSuccess, form, navigate]);
 
   return (
     <Form {...form}>

@@ -12,6 +12,7 @@ import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { Form } from "../ui/form";
+import { toast } from "sonner";
 
 const taskSchema = z.object({
   title: z
@@ -27,20 +28,37 @@ const taskSchema = z.object({
 
 type TaskFormValues = z.infer<typeof taskSchema>;
 
-const EditTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+interface EditTaskModalProps {
+  title: string;
+  description: string;
+  onSubmit: (data: { title: string; description: string }) => Promise<any>;
+  onClose?: () => void;
+}
+
+const EditTaskModal: React.FC<EditTaskModalProps> = ({
+  title,
+  description,
+  onSubmit: onSubmitProp,
+  onClose,
+}) => {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      title,
+      description,
     },
   });
 
-  const onSubmit = (data: TaskFormValues) => {
-    console.log("Task Added:", data);
-    form.reset();
-    onClose?.();
+  const onSubmit = async (data: TaskFormValues) => {
+    try {
+      await onSubmitProp(data);
+      toast.success("Task updated successfully");
+      onClose?.();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Update failed");
+    }
   };
+
   return (
     <DialogContent>
       <DialogHeader>
@@ -58,10 +76,7 @@ const EditTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               <Label className="text-sm font-medium text-text-primary dark:text-white">
                 Title
               </Label>
-              <Input
-                placeholder="Enter title of the task..."
-                {...form.register("title")}
-              />
+              <Input placeholder={title} {...form.register("title")} />
               {/* ERROR */}
               {form.formState.errors.title && (
                 <span className="text-sm text-text-danger">
@@ -76,7 +91,7 @@ const EditTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               <Textarea
                 {...form.register("description")}
                 rows={4}
-                placeholder="Enter description..."
+                placeholder={description}
               />
               {form.formState.errors.description && (
                 <p className="text-sm text-text-danger">
@@ -88,7 +103,12 @@ const EditTaskModal: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             {/* FOOTER BUTTONS */}
             <DialogFooter className="flex justify-end">
               <>
-                <Button variant="outline" type="button" onClick={onClose} className="dark:text-white">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={onClose}
+                  className="dark:text-white"
+                >
                   Cancel
                 </Button>
 

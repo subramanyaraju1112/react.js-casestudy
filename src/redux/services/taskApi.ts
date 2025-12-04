@@ -1,13 +1,18 @@
+import type {
+  CreateTaskRequest,
+  CreateTaskResponse,
+  GetTasksResponse,
+} from "../types/userTypes";
 import { api } from "./api";
 
 export const taskApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getTasks: builder.query<any[], void>({
+    getTasks: builder.query<GetTasksResponse, void>({
       query: () => "/user/task",
       providesTags: ["Tasks"],
     }),
 
-    addTask: builder.mutation<any, any>({
+    addTask: builder.mutation<CreateTaskResponse, CreateTaskRequest>({
       query: (body) => ({
         url: "/user/task",
         method: "POST",
@@ -16,7 +21,15 @@ export const taskApi = api.injectEndpoints({
       invalidatesTags: ["Tasks"],
     }),
 
-    updateTask: builder.mutation<any, any>({
+    updateTask: builder.mutation<
+      { message: string; task: any },
+      {
+        id: string;
+        title?: string;
+        description?: string;
+        status?: "pending" | "completed";
+      }
+    >({
       query: ({ id, ...body }) => ({
         url: `/user/task/${id}`,
         method: "PATCH",
