@@ -14,7 +14,9 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSignInMutation } from "@/redux/services/authApi";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -28,6 +30,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignIn: React.FC = () => {
+  const navigate = useNavigate();
+  const [signIn, { isLoading }] = useSignInMutation();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<FormValues>({
@@ -41,7 +45,39 @@ const SignIn: React.FC = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Form Data:", data);
+    try {
+      const response = await signIn(data).unwrap();
+      console.log("SIGN IN SUCCESS:", response);
+
+      if (response?.token) {
+        localStorage.setItem("token", response.token);
+      }
+      if (response?.user) {
+        localStorage.setItem("user", JSON.stringify(response.user));
+      }
+      toast.success(response?.message || "Login Successful");
+
+      const role = response?.user?.role;
+
+      setTimeout(() => {
+        if (role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/task");
+        }
+      }, 800);
+    } catch (err) {
+      console.error("SIGN IN ERROR:", err);
+
+      let errorMessage = "Sign In failed";
+      if (typeof err === "object" && err !== null && "data" in err) {
+        errorMessage =
+          (err as any)?.data?.message ||
+          (err as any)?.error ||
+          "Invalid credentials";
+      }
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -117,12 +153,8 @@ const SignIn: React.FC = () => {
 
         {/* SUBMIT BUTTON */}
         <div className="py-9">
-          <Button
-            className="w-full"
-            variant="primary"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+          <Button className="w-full" variant="primary" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </div>
 

@@ -2,7 +2,7 @@ import { AddTaskModal, TaskCard } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Add } from "iconsax-reactjs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { tasks } from "@/constants";
 import {
   Pagination,
@@ -13,6 +13,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { useGetTasksQuery } from "@/redux/services/taskApi";
 
 const TASKS_PER_PAGE = 6;
 
@@ -21,33 +22,40 @@ const Task: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const filteredTasks = tasks.filter((task) => {
-    const query = search.toLowerCase();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { data, isLoading } = useGetTasksQuery();
+  // const tasks = data?.tasks || [];
+  console.log("Tasks", data);
 
-    return (
-      task.title.toLowerCase().includes(query) ||
-      task.description.toLowerCase().includes(query) ||
-      task.createdOn.toLowerCase().includes(query)
-    );
-  });
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task: any) => {
+      const query = search.toLowerCase();
+      return (
+        task.title.toLowerCase().includes(query) ||
+        task.description.toLowerCase().includes(query) ||
+        task.createdAt?.toLowerCase().includes(query)
+      );
+    });
+  }, [search, tasks]);
 
   const totalPages = Math.ceil(filteredTasks.length / TASKS_PER_PAGE);
 
   const indexOfLastTask = currentPage * TASKS_PER_PAGE;
   const indexOfFirstTask = indexOfLastTask - TASKS_PER_PAGE;
   const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const today = new Date().toDateString();
 
   return (
     <section className="flex flex-col gap-9">
       <section className="flex flex-col gap-5">
         <span className="text-text-primary text-sm dark:text-white">
-          Mon, Jun 07
+          {today}
         </span>
         {/* TOP LAYOUT */}
         <div className="flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
           {/* LEFT SIDE TEXT */}
           <div className="text-text-primary text-2xl sm:text-3xl leading-tight dark:text-white">
-            <h1>Hey Johnathan,</h1>
+            <h1>Hey {user?.username || "User"},</h1>
             <p>Here’s your To-Do List.</p>
           </div>
 
